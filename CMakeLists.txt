@@ -38,6 +38,15 @@ if (APPLE)
     endif()
 endif()
 
+if(EMSCRIPTEN)
+    set(CMAKE_AR "emar")
+    set(CMAKE_RANLIB "emranlib")
+    set(CXX_target "em")
+    set(CC_target "emcc")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__TBB_BUILD=1 -D_TBB_CPP0X -m32 -s USE_PTHREADS=1")
+    SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -s WASM=1 -s USE_PTHREADS=1 -s EXIT_RUNTIME=1 -s DEMANGLE_SUPPORT=1 -O2")
+endif()
+
 # Until CMake 3.4.0 FindThreads.cmake requires C language enabled.
 # Enable C language before CXX to avoid possible override of CMAKE_SIZEOF_VOID_P.
 if (CMAKE_VERSION VERSION_LESS 3.4)
@@ -270,15 +279,6 @@ if (ANDROID_PLATFORM)
     # only for corresponding custom target, it was implemented by this way.
     add_custom_target(device_environment_cleanup COMMAND ${CMAKE_COMMAND}
                       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/android/device_environment_cleanup.cmake)
-endif()
-
-if(EMSCRIPTEN)
-    set(CMAKE_AR "emar")
-    set(CMAKE_RANLIB "emranlib")
-    set(CXX_target "em")
-    set(CC_target "emcc")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__TBB_BUILD=1 -D_TBB_CPP0X -m32 -s USE_PTHREADS=1")
-    SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -s WASM=1 -s USE_PTHREADS=1 -s EXIT_RUNTIME=1 -s DEMANGLE_SUPPORT=1 -O2")
 endif()
 
 if (TBB4PY_BUILD)
