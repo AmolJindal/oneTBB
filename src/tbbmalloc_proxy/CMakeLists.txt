@@ -54,7 +54,7 @@ set_target_properties(tbbmalloc_proxy PROPERTIES
     VERSION ${TBBMALLOC_BINARY_VERSION}.${TBB_BINARY_MINOR_VERSION}
     SOVERSION ${TBBMALLOC_BINARY_VERSION})
 
-if (UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE AND NOT EMSCRIPTEN)
     # Avoid use of target_link_libraries here as it changes /DEF option to \DEF on Windows.
     set_target_properties(tbbmalloc_proxy PROPERTIES
         LINK_FLAGS "${TBB_LINK_DEF_FILE_FLAG}\"${CMAKE_CURRENT_SOURCE_DIR}/def/${TBB_DEF_FILE_PREFIX}-proxy.def\""

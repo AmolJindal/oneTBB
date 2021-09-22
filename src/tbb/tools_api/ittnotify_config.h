@@ -323,6 +323,9 @@ ITT_INLINE long __itt_interlocked_increment(volatile long* ptr)
 #ifdef __INTEL_COMPILER
 #define __TBB_machine_fetchadd4(addr, val) __fetchadd4_acq((void *)addr, val)
 #else  /* __INTEL_COMPILER */
+#if EMSCRIPTEN
+#define __TBB_machine_fetchadd4(addr, val) __sync_fetch_and_add(addr, val)
+#endif
 /* TODO: Add Support for not Intel compilers for IA-64 architecture */
 #endif /* __INTEL_COMPILER */
 #elif ITT_ARCH==ITT_ARCH_IA32 || ITT_ARCH==ITT_ARCH_IA32E /* ITT_ARCH!=ITT_ARCH_IA64 */
