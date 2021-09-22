@@ -321,8 +321,10 @@ inline void create_coroutine(coroutine_type& c, std::size_t stack_size, void* ar
     c.my_stack = (void*)(stack_ptr + REG_PAGE_SIZE);
     c.my_stack_size = page_aligned_stack_size;
 
+#ifndef EMSCRIPTEN
     err = getcontext(&c.my_context);
     __TBB_ASSERT_EX(!err, NULL);
+#endif
 
     c.my_context.uc_link = 0;
     // cast to char* to disable FreeBSD clang-3.4.1 'incompatible type' error
@@ -337,17 +339,23 @@ inline void create_coroutine(coroutine_type& c, std::size_t stack_size, void* ar
     unsigned hi = unsigned(std::uint64_t(addr) >> 32);
     __TBB_ASSERT(sizeof(addr) == 8 || hi == 0, nullptr);
 
+#ifndef EMSCRIPTEN
     makecontext(&c.my_context, (coroutine_func_t)co_local_wait_for_all, 2, hi, lo);
+#endif
 }
 
 inline void current_coroutine(coroutine_type& c) {
+#ifndef EMSCRIPTEN
     int err = getcontext(&c.my_context);
     __TBB_ASSERT_EX(!err, NULL);
+#endif
 }
 
 inline void swap_coroutine(coroutine_type& prev_coroutine, coroutine_type& new_coroutine) {
+#ifndef EMSCRIPTEN
     int err = swapcontext(&prev_coroutine.my_context, &new_coroutine.my_context);
     __TBB_ASSERT_EX(!err, NULL);
+#endif
 }
 
 inline void destroy_coroutine(coroutine_type& c) {
